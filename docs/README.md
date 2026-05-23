@@ -12,4 +12,5 @@ Suggested future additions:
 
 - `docs/ui-theme.md` for the landing or home screen direction
 - `docs/api.md` for backend endpoints and data contracts
+- `docs/product-scope.md` for product, data, and feature scope
 - `shared/` only if both apps later need common constants or types

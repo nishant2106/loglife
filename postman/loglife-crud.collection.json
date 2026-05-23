@@ -1,0 +1,400 @@
+{
+  "info": {
+    "_postman_id": "17f2a3d0-39e2-4c1c-91bd-6c4294040d01",
+    "name": "LogLife CRUD APIs",
+    "description": "CRUD requests for all generated LogLife backend resources.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001" },
+    { "key": "usersId", "value": "" },
+    { "key": "logsId", "value": "" },
+    { "key": "logInputsId", "value": "" },
+    { "key": "peopleId", "value": "" },
+    { "key": "relationshipTypesId", "value": "" },
+    { "key": "eventsId", "value": "" },
+    { "key": "goalsId", "value": "" },
+    { "key": "moodTypesId", "value": "" },
+    { "key": "moodsId", "value": "" },
+    { "key": "attachmentsId", "value": "" },
+    { "key": "logPeopleId", "value": "" },
+    { "key": "logEventsId", "value": "" },
+    { "key": "llmOperationsId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo User\",\n  \"email\": \"demo.user@example.com\",\n  \"authProvider\": \"EMAIL_OTP\"\n}"
+            },
+            "url": "{{baseUrl}}/users"
+          }
+        },
+        { "name": "List Users", "request": { "method": "GET", "url": "{{baseUrl}}/users" } },
+        { "name": "Get User", "request": { "method": "GET", "url": "{{baseUrl}}/users/{{usersId}}" } },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Demo User\",\n  \"isActive\": true\n}" },
+            "url": "{{baseUrl}}/users/{{usersId}}"
+          }
+        },
+        { "name": "Delete User", "request": { "method": "DELETE", "url": "{{baseUrl}}/users/{{usersId}}" } }
+      ]
+    },
+    {
+      "name": "Logs",
+      "item": [
+        {
+          "name": "Create Log",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"title\": \"Morning reflection\",\n  \"kind\": \"DAY\",\n  \"status\": \"DRAFT\",\n  \"summary\": \"A sample day log\"\n}"
+            },
+            "url": "{{baseUrl}}/logs"
+          }
+        },
+        { "name": "List Logs", "request": { "method": "GET", "url": "{{baseUrl}}/logs" } },
+        { "name": "Get Log", "request": { "method": "GET", "url": "{{baseUrl}}/logs/{{logsId}}" } },
+        {
+          "name": "Update Log",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"summary\": \"Updated summary\",\n  \"status\": \"PROCESSED\"\n}" },
+            "url": "{{baseUrl}}/logs/{{logsId}}"
+          }
+        },
+        { "name": "Delete Log", "request": { "method": "DELETE", "url": "{{baseUrl}}/logs/{{logsId}}" } }
+      ]
+    },
+    {
+      "name": "Log Inputs",
+      "item": [
+        {
+          "name": "Create Log Input",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"log\": {\n    \"connect\": {\n      \"id\": \"{{logsId}}\"\n    }\n  },\n  \"sourceType\": \"TEXT\",\n  \"transcriptText\": \"Today felt productive.\",\n  \"processingStatus\": \"PENDING\"\n}"
+            },
+            "url": "{{baseUrl}}/log-inputs"
+          }
+        },
+        { "name": "List Log Inputs", "request": { "method": "GET", "url": "{{baseUrl}}/log-inputs" } },
+        { "name": "Get Log Input", "request": { "method": "GET", "url": "{{baseUrl}}/log-inputs/{{logInputsId}}" } },
+        {
+          "name": "Update Log Input",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"processingStatus\": \"COMPLETED\"\n}" },
+            "url": "{{baseUrl}}/log-inputs/{{logInputsId}}"
+          }
+        },
+        { "name": "Delete Log Input", "request": { "method": "DELETE", "url": "{{baseUrl}}/log-inputs/{{logInputsId}}" } }
+      ]
+    },
+    {
+      "name": "People",
+      "item": [
+        {
+          "name": "Create Person",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"name\": \"Jane Friend\",\n  \"nickname\": \"Jane\"\n}"
+            },
+            "url": "{{baseUrl}}/people"
+          }
+        },
+        { "name": "List People", "request": { "method": "GET", "url": "{{baseUrl}}/people" } },
+        { "name": "Get Person", "request": { "method": "GET", "url": "{{baseUrl}}/people/{{peopleId}}" } },
+        {
+          "name": "Update Person",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" },
+            "url": "{{baseUrl}}/people/{{peopleId}}"
+          }
+        },
+        { "name": "Delete Person", "request": { "method": "DELETE", "url": "{{baseUrl}}/people/{{peopleId}}" } }
+      ]
+    },
+    {
+      "name": "Relationship Types",
+      "item": [
+        {
+          "name": "Create Relationship Type",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"label\": \"Friend\",\n  \"description\": \"People in your friends circle\"\n}"
+            },
+            "url": "{{baseUrl}}/relationship-types"
+          }
+        },
+        { "name": "List Relationship Types", "request": { "method": "GET", "url": "{{baseUrl}}/relationship-types" } },
+        { "name": "Get Relationship Type", "request": { "method": "GET", "url": "{{baseUrl}}/relationship-types/{{relationshipTypesId}}" } },
+        {
+          "name": "Update Relationship Type",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated relationship description\"\n}" },
+            "url": "{{baseUrl}}/relationship-types/{{relationshipTypesId}}"
+          }
+        },
+        { "name": "Delete Relationship Type", "request": { "method": "DELETE", "url": "{{baseUrl}}/relationship-types/{{relationshipTypesId}}" } }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"title\": \"Birthday Dinner\",\n  \"description\": \"Dinner with friends\"\n}"
+            },
+            "url": "{{baseUrl}}/events"
+          }
+        },
+        { "name": "List Events", "request": { "method": "GET", "url": "{{baseUrl}}/events" } },
+        { "name": "Get Event", "request": { "method": "GET", "url": "{{baseUrl}}/events/{{eventsId}}" } },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated event details\"\n}" },
+            "url": "{{baseUrl}}/events/{{eventsId}}"
+          }
+        },
+        { "name": "Delete Event", "request": { "method": "DELETE", "url": "{{baseUrl}}/events/{{eventsId}}" } }
+      ]
+    },
+    {
+      "name": "Goals",
+      "item": [
+        {
+          "name": "Create Goal",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"title\": \"Walk daily\",\n  \"description\": \"30 minutes a day\"\n}"
+            },
+            "url": "{{baseUrl}}/goals"
+          }
+        },
+        { "name": "List Goals", "request": { "method": "GET", "url": "{{baseUrl}}/goals" } },
+        { "name": "Get Goal", "request": { "method": "GET", "url": "{{baseUrl}}/goals/{{goalsId}}" } },
+        {
+          "name": "Update Goal",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated goal details\"\n}" },
+            "url": "{{baseUrl}}/goals/{{goalsId}}"
+          }
+        },
+        { "name": "Delete Goal", "request": { "method": "DELETE", "url": "{{baseUrl}}/goals/{{goalsId}}" } }
+      ]
+    },
+    {
+      "name": "Mood Types",
+      "item": [
+        {
+          "name": "Create Mood Type",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"label\": \"Happy\",\n  \"description\": \"Positive mood\"\n}" },
+            "url": "{{baseUrl}}/mood-types"
+          }
+        },
+        { "name": "List Mood Types", "request": { "method": "GET", "url": "{{baseUrl}}/mood-types" } },
+        { "name": "Get Mood Type", "request": { "method": "GET", "url": "{{baseUrl}}/mood-types/{{moodTypesId}}" } },
+        {
+          "name": "Update Mood Type",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated mood type description\"\n}" },
+            "url": "{{baseUrl}}/mood-types/{{moodTypesId}}"
+          }
+        },
+        { "name": "Delete Mood Type", "request": { "method": "DELETE", "url": "{{baseUrl}}/mood-types/{{moodTypesId}}" } }
+      ]
+    },
+    {
+      "name": "Moods",
+      "item": [
+        {
+          "name": "Create Mood",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"moodType\": {\n    \"connect\": {\n      \"id\": \"{{moodTypesId}}\"\n    }\n  },\n  \"rating\": 4,\n  \"description\": \"Feeling good\"\n}"
+            },
+            "url": "{{baseUrl}}/moods"
+          }
+        },
+        { "name": "List Moods", "request": { "method": "GET", "url": "{{baseUrl}}/moods" } },
+        { "name": "Get Mood", "request": { "method": "GET", "url": "{{baseUrl}}/moods/{{moodsId}}" } },
+        {
+          "name": "Update Mood",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"rating\": 5\n}" },
+            "url": "{{baseUrl}}/moods/{{moodsId}}"
+          }
+        },
+        { "name": "Delete Mood", "request": { "method": "DELETE", "url": "{{baseUrl}}/moods/{{moodsId}}" } }
+      ]
+    },
+    {
+      "name": "Attachments",
+      "item": [
+        {
+          "name": "Create Attachment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"type\": \"IMAGE\",\n  \"fileName\": \"memory.jpg\",\n  \"url\": \"https://example.com/memory.jpg\"\n}"
+            },
+            "url": "{{baseUrl}}/attachments"
+          }
+        },
+        { "name": "List Attachments", "request": { "method": "GET", "url": "{{baseUrl}}/attachments" } },
+        { "name": "Get Attachment", "request": { "method": "GET", "url": "{{baseUrl}}/attachments/{{attachmentsId}}" } },
+        {
+          "name": "Update Attachment",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"mimeType\": \"image/jpeg\"\n}" },
+            "url": "{{baseUrl}}/attachments/{{attachmentsId}}"
+          }
+        },
+        { "name": "Delete Attachment", "request": { "method": "DELETE", "url": "{{baseUrl}}/attachments/{{attachmentsId}}" } }
+      ]
+    },
+    {
+      "name": "Log People",
+      "item": [
+        {
+          "name": "Create Log Person",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"log\": {\n    \"connect\": {\n      \"id\": \"{{logsId}}\"\n    }\n  },\n  \"person\": {\n    \"connect\": {\n      \"id\": \"{{peopleId}}\"\n    }\n  },\n  \"source\": \"AI\"\n}"
+            },
+            "url": "{{baseUrl}}/log-people"
+          }
+        },
+        { "name": "List Log People", "request": { "method": "GET", "url": "{{baseUrl}}/log-people" } },
+        { "name": "Get Log Person", "request": { "method": "GET", "url": "{{baseUrl}}/log-people/{{logPeopleId}}" } },
+        {
+          "name": "Update Log Person",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"contextSnippet\": \"Mentioned during lunch\"\n}" },
+            "url": "{{baseUrl}}/log-people/{{logPeopleId}}"
+          }
+        },
+        { "name": "Delete Log Person", "request": { "method": "DELETE", "url": "{{baseUrl}}/log-people/{{logPeopleId}}" } }
+      ]
+    },
+    {
+      "name": "Log Events",
+      "item": [
+        {
+          "name": "Create Log Event",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"log\": {\n    \"connect\": {\n      \"id\": \"{{logsId}}\"\n    }\n  },\n  \"event\": {\n    \"connect\": {\n      \"id\": \"{{eventsId}}\"\n    }\n  },\n  \"source\": \"AI\"\n}"
+            },
+            "url": "{{baseUrl}}/log-events"
+          }
+        },
+        { "name": "List Log Events", "request": { "method": "GET", "url": "{{baseUrl}}/log-events" } },
+        { "name": "Get Log Event", "request": { "method": "GET", "url": "{{baseUrl}}/log-events/{{logEventsId}}" } },
+        {
+          "name": "Update Log Event",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"contextSnippet\": \"Referenced in evening recap\"\n}" },
+            "url": "{{baseUrl}}/log-events/{{logEventsId}}"
+          }
+        },
+        { "name": "Delete Log Event", "request": { "method": "DELETE", "url": "{{baseUrl}}/log-events/{{logEventsId}}" } }
+      ]
+    },
+    {
+      "name": "LLM Operations",
+      "item": [
+        {
+          "name": "Create LLM Operation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user\": {\n    \"connect\": {\n      \"id\": \"{{usersId}}\"\n    }\n  },\n  \"log\": {\n    \"connect\": {\n      \"id\": \"{{logsId}}\"\n    }\n  },\n  \"operationType\": \"SUMMARIZE_LOG\",\n  \"provider\": \"openai\",\n  \"model\": \"gpt-4.1-mini\",\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": "{{baseUrl}}/llm-operations"
+          }
+        },
+        { "name": "List LLM Operations", "request": { "method": "GET", "url": "{{baseUrl}}/llm-operations" } },
+        { "name": "Get LLM Operation", "request": { "method": "GET", "url": "{{baseUrl}}/llm-operations/{{llmOperationsId}}" } },
+        {
+          "name": "Update LLM Operation",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"COMPLETED\",\n  \"totalTokens\": 120\n}" },
+            "url": "{{baseUrl}}/llm-operations/{{llmOperationsId}}"
+          }
+        },
+        { "name": "Delete LLM Operation", "request": { "method": "DELETE", "url": "{{baseUrl}}/llm-operations/{{llmOperationsId}}" } }
+      ]
+    }
+  ]
+}

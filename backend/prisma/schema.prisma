@@ -7,9 +7,306 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Healthcheck {
-  id        Int      @id @default(autoincrement())
-  name      String   @default("backend")
-  createdAt DateTime @default(now())
-  deletedAt DateTime?
+enum AuthProvider {
+  EMAIL_MAGIC_LINK
+  EMAIL_OTP
+}
+
+enum LogSourceType {
+  TEXT
+  VOICE
+}
+
+enum LogStatus {
+  DRAFT
+  PROCESSED
+  ARCHIVED
+}
+
+enum LogKind {
+  DAY
+  EVENT
+  MEMORY
+  NOTE
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum AttachmentType {
+  IMAGE
+  AUDIO
+  DOCUMENT
+  OTHER
+}
+
+enum EntityLinkSource {
+  USER
+  AI
+}
+
+model User {
+  id              String         @id @default(cuid())
+  name            String
+  email           String         @unique
+  authProvider    AuthProvider?
+  emailVerifiedAt DateTime?
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
+  logs            Log[]
+  people          Person[]
+  relationshipTypes RelationshipType[]
+  events          Event[]
+  goals           Goal[]
+  moods           Mood[]
+  attachments     Attachment[]
+  llmOperations   LlmOperation[]
+
+  @@index([email])
+  @@index([deletedAt])
+}
+
+model Log {
+  id               String           @id @default(cuid())
+  userId           String
+  title            String?
+  kind             LogKind          @default(DAY)
+  status           LogStatus        @default(DRAFT)
+  summary          String?
+  startDate        DateTime?
+  endDate          DateTime?
+  processingStatus ProcessingStatus @default(PENDING)
+  metaInfo         Json?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inputs           LogInput[]
+  people           LogPerson[]
+  events           LogEvent[]
+  goals            Goal[]
+  moods            Mood[]
+  attachments      Attachment[]
+  llmOperations    LlmOperation[]
+
+  @@index([userId, startDate, endDate])
+  @@index([userId, status])
+  @@index([userId, kind])
+  @@index([deletedAt])
+}
+
+model LogInput {
+  id               String           @id @default(cuid())
+  logId            String
+  sourceType       LogSourceType
+  transcriptText   String?
+  audioUrl         String?
+  durationSeconds  Int?
+  processingStatus ProcessingStatus @default(PENDING)
+  metaInfo         Json?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  deletedAt        DateTime?
+  log              Log              @relation(fields: [logId], references: [id], onDelete: Cascade)
+
+  @@index([logId])
+  @@index([deletedAt])
+}
+
+model Person {
+  id              String            @id @default(cuid())
+  userId          String
+  relationshipTypeId String?
+  name            String
+  nickname        String?
+  description     String?
+  profileImageUrl String?
+  metaInfo        Json?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  relationshipType RelationshipType? @relation(fields: [relationshipTypeId], references: [id], onDelete: SetNull)
+  logs            LogPerson[]
+
+  @@index([userId, name])
+  @@index([relationshipTypeId])
+  @@index([deletedAt])
+}
+
+model RelationshipType {
+  id          String    @id @default(cuid())
+  userId      String
+  label       String
+  description String?
+  metaInfo    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  people      Person[]
+
+  @@index([userId, label])
+  @@index([deletedAt])
+}
+
+model Event {
+  id          String     @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  primaryDate DateTime?
+  metaInfo    Json?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs        LogEvent[]
+
+  @@index([userId, title])
+  @@index([userId, primaryDate])
+  @@index([deletedAt])
+}
+
+model Goal {
+  id          String    @id @default(cuid())
+  userId      String
+  logId       String?
+  title       String
+  description String?
+  targetDate  DateTime?
+  metaInfo    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  log         Log?      @relation(fields: [logId], references: [id], onDelete: SetNull)
+
+  @@index([userId, title])
+  @@index([logId])
+  @@index([deletedAt])
+}
+
+model MoodType {
+  id          String   @id @default(cuid())
+  label       String   @unique
+  description String?
+  metaInfo    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  moods       Mood[]
+
+  @@index([label])
+}
+
+model Mood {
+  id          String    @id @default(cuid())
+  userId      String
+  logId       String?
+  moodTypeId  String
+  rating      Int?
+  description String?
+  metaInfo    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  log         Log?      @relation(fields: [logId], references: [id], onDelete: SetNull)
+  moodType    MoodType  @relation(fields: [moodTypeId], references: [id], onDelete: Restrict)
+
+  @@index([userId, moodTypeId])
+  @@index([logId])
+  @@index([deletedAt])
+}
+
+model Attachment {
+  id         String         @id @default(cuid())
+  userId     String
+  logId      String?
+  type       AttachmentType
+  fileName   String
+  storageKey String?
+  url        String?
+  mimeType   String?
+  sizeBytes  Int?
+  metaInfo   Json?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  deletedAt  DateTime?
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  log        Log?           @relation(fields: [logId], references: [id], onDelete: SetNull)
+
+  @@index([userId, type])
+  @@index([logId])
+  @@index([deletedAt])
+}
+
+model LogPerson {
+  id             String           @id @default(cuid())
+  logId          String
+  personId       String
+  source         EntityLinkSource @default(AI)
+  confidence     Decimal?         @db.Decimal(5, 2)
+  contextSnippet String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  log            Log              @relation(fields: [logId], references: [id], onDelete: Cascade)
+  person         Person           @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([logId, personId])
+  @@index([personId])
+  @@index([deletedAt])
+}
+
+model LogEvent {
+  id             String           @id @default(cuid())
+  logId          String
+  eventId        String
+  source         EntityLinkSource @default(AI)
+  confidence     Decimal?         @db.Decimal(5, 2)
+  contextSnippet String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+  log            Log              @relation(fields: [logId], references: [id], onDelete: Cascade)
+  event          Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([logId, eventId])
+  @@index([eventId])
+  @@index([deletedAt])
+}
+
+model LlmOperation {
+  id              String           @id @default(cuid())
+  userId          String
+  logId           String?
+  operationType   String
+  provider        String?
+  model           String?
+  promptVersion   String?
+  status          ProcessingStatus @default(PENDING)
+  inputTokens     Int?
+  outputTokens    Int?
+  totalTokens     Int?
+  estimatedCost   Decimal?         @db.Decimal(12, 4)
+  usedUserApiKey  Boolean          @default(false)
+  requestPayload  Json?
+  responsePayload Json?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  log             Log?             @relation(fields: [logId], references: [id], onDelete: SetNull)
+
+  @@index([userId, operationType])
+  @@index([logId])
+  @@index([status])
+  @@index([deletedAt])
 }
